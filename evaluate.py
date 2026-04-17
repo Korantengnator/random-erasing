@@ -20,7 +20,7 @@ def plot_training_curves(baseline, re_results):
 
     epochs = [entry['epoch'] for entry in baseline]
 
-    # Pull out the values we want to plot
+    # Pull out the values to plot
     baseline_train_acc = [entry['train_acc'] for entry in baseline]
     re_train_acc       = [entry['train_acc'] for entry in re_results]
 
@@ -30,7 +30,7 @@ def plot_training_curves(baseline, re_results):
     # Create a figure with 2 side-by-side plots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
-    # --- Plot 1: Training Accuracy ---
+    # Training Accuracy 
     ax1.plot(epochs, baseline_train_acc, label='Baseline', color='steelblue', linewidth=2)
     ax1.plot(epochs, re_train_acc, label='Random Erasing', color='darkorange', linewidth=2)
     ax1.set_title('Training Accuracy over Epochs', fontsize=14)
@@ -39,7 +39,7 @@ def plot_training_curves(baseline, re_results):
     ax1.legend()
     ax1.grid(True, alpha=0.3)
 
-    # --- Plot 2: Test Error ---
+    # Test Error 
     ax2.plot(epochs, baseline_test_error, label='Baseline', color='steelblue', linewidth=2)
     ax2.plot(epochs, re_test_error, label='Random Erasing', color='darkorange', linewidth=2)
     ax2.set_title('Test Error over Epochs', fontsize=14)

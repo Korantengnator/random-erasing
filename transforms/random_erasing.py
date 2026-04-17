@@ -19,8 +19,7 @@ class RandomErasing:
                    'max'    - all 255s / white (RE-255)
     """
 
-    # ImageNet mean pixel values (one per colour channel: R, G, B)
-    # These are the known average pixel values across the ImageNet dataset
+    # ImageNet mean pixel values
     IMAGENET_MEAN = [0.4914, 0.4822, 0.4465]
 
     def __init__(self, p=0.5, sl=0.02, sh=0.4, r1=0.3, fill_mode='random'):
@@ -37,11 +36,11 @@ class RandomErasing:
         img: a PyTorch tensor of shape (3, Height, Width)
         """
 
-        # Step 1: decide whether to erase this image at all
+        # decide whether to erase this image at all
         if random.random() > self.p:
             return img
 
-        # Step 2: try to find a valid rectangle
+        # try to find a valid rectangle
         for _ in range(100):
             image_area = img.size(1) * img.size(2)
             erase_area = random.uniform(self.sl, self.sh) * image_area
@@ -54,25 +53,25 @@ class RandomErasing:
                 x1 = random.randint(0, img.size(2) - w)
                 y1 = random.randint(0, img.size(1) - h)
 
-                # Step 3: fill the rectangle based on chosen mode
+                # fill the rectangle based on chosen mode
                 if self.fill_mode == 'random':
-                    # Random value for each channel (what we used before)
+                    # Random value for each channel
                     img[0, y1:y1+h, x1:x1+w] = random.random()
                     img[1, y1:y1+h, x1:x1+w] = random.random()
                     img[2, y1:y1+h, x1:x1+w] = random.random()
 
                 elif self.fill_mode == 'mean':
-                    # Fill with ImageNet mean — a neutral colour
+                    # Fill with ImageNet mean 
                     img[0, y1:y1+h, x1:x1+w] = self.IMAGENET_MEAN[0]
                     img[1, y1:y1+h, x1:x1+w] = self.IMAGENET_MEAN[1]
                     img[2, y1:y1+h, x1:x1+w] = self.IMAGENET_MEAN[2]
 
                 elif self.fill_mode == 'zero':
-                    # Fill with zeros (black rectangle)
+                    # Fill with a black rectangle
                     img[:, y1:y1+h, x1:x1+w] = 0.0
 
                 elif self.fill_mode == 'max':
-                    # Fill with 1.0 (white rectangle, since images are in [0,1])
+                    # Fill with a white rectangle, since images are in [0,1]
                     img[:, y1:y1+h, x1:x1+w] = 1.0
 
                 return img

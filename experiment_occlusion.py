@@ -1,7 +1,3 @@
-# Replicates Figure 3 from the paper.
-# Tests how robust each model is when test images are artificially occluded.
-# No new training needed — we load the already-trained models and just evaluate.
-
 import torch
 import torch.nn as nn
 import torchvision
@@ -46,7 +42,7 @@ def add_occlusion(images, occlusion_fraction):
         return images
 
     occluded = images.clone()
-    _, _, H, W = images.shape  # batch, channels, height, width
+    _, _, H, W = images.shape  
 
     # Calculate the patch size based on the fraction
     patch_size = int((occlusion_fraction ** 0.5) * H)
@@ -101,7 +97,7 @@ if __name__ == "__main__":
     set_seed(42)
     device = get_device()
 
-    # --- Check saved models exist ---
+    # Check if saved models exist 
     baseline_path = 'results/baseline_model.pth'
     re_path       = 'results/with_RE_model.pth'
 
@@ -117,7 +113,7 @@ if __name__ == "__main__":
     re_model       = load_trained_model(re_path, device)
     print("Models loaded successfully.\n")
 
-    # --- Load the test set (no augmentation, just normalisation) ---
+    # Load the test set (no augmentation, just normalisation) 
     test_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(
@@ -133,12 +129,10 @@ if __name__ == "__main__":
         test_dataset, batch_size=256, shuffle=False, num_workers=0
     )
 
-    # --- Define occlusion levels to test ---
-    # Each value is the fraction of the image covered by the occlusion patch.
-    # 0.0 = no occlusion, 0.5 = half the image is blocked
+    # Define the occlusion levels to test (0% to 50% of the image area)
     occlusion_levels = [0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.4, 0.5]
 
-    # --- Run evaluation at each occlusion level ---
+    # Run evaluation at each occlusion level 
     print("Evaluating both models at each occlusion level...\n")
 
     baseline_errors = []
@@ -159,7 +153,7 @@ if __name__ == "__main__":
               f"Baseline Error: {b_error:.2f}% | "
               f"RE Error: {r_error:.2f}%")
 
-    # --- Print summary table ---
+    #  Print summary table 
     print("\n" + "="*55)
     print(f"{'OCCLUSION ROBUSTNESS RESULTS':^55}")
     print("="*55)
@@ -173,7 +167,7 @@ if __name__ == "__main__":
               f"{r_err:>13.2f}%{marker}")
     print("="*55)
 
-    # --- Plot the results ---
+    # Plot the results 
     plt.figure(figsize=(9, 5))
 
     plt.plot(

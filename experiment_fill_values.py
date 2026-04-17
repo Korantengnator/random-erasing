@@ -1,6 +1,3 @@
-# This script runs four versions of Random Erasing — one per fill mode —
-# and compares their test errors, replicating Table 3 from the paper.
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -189,7 +186,7 @@ def plot_fill_comparison(results):
 
 
 if __name__ == "__main__":
-    # Run all five conditions: baseline + four fill modes
+    # Define the fill modes to test. None means no Random Erasing (baseline). 
     experiments = {
         'Baseline':  None,
         'RE-R (Random)': 'random',

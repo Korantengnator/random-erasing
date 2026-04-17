@@ -1,7 +1,3 @@
-# Replicates Table 5 from the paper.
-# Tests all 8 combinations of Random Flipping (RF),
-# Random Cropping (RC), and Random Erasing (RE).
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -49,16 +45,15 @@ def get_loaders(use_rf=False, use_rc=False, use_re=False, batch_size=128):
 
     train_transforms_list = []
 
-    # Random Cropping — pad image by 4 pixels on each side, then crop back
+    # Random Cropping
     if use_rc:
         train_transforms_list.append(transforms.RandomCrop(32, padding=4))
 
-    # Random Flipping — mirror the image horizontally
+    # Random Flipping 
     if use_rf:
         train_transforms_list.append(transforms.RandomHorizontalFlip())
 
-    # Always convert to tensor and normalize (these are not augmentations,
-    # just required preprocessing steps)
+    # ToTensor and Normalize (must come before Random Erasing)
     train_transforms_list.append(transforms.ToTensor())
     train_transforms_list.append(
         transforms.Normalize(
@@ -67,7 +62,7 @@ def get_loaders(use_rf=False, use_rc=False, use_re=False, batch_size=128):
         )
     )
 
-    # Random Erasing must come AFTER ToTensor (needs a tensor, not PIL image)
+    # Random Erasing (must come after ToTensor and Normalize)
     if use_re:
         train_transforms_list.append(
             RandomErasing(p=0.5, sl=0.02, sh=0.4, r1=0.3, fill_mode='random')
@@ -211,8 +206,7 @@ def plot_augmentation_comparison(results):
 
 if __name__ == "__main__":
 
-    # All 8 combinations of RF, RC, RE
-    # Format: (name, use_rf, use_rc, use_re)
+    # Define the 8 combinations of augmentations to test. 
     experiments = [
         ("None",        False, False, False),
         ("RF",          True,  False, False),
